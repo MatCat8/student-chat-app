@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Help Chat Forums (Demo)</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+      padding: 32px 24px 24px 24px;
+      position: relative;
+    }
+    h2 {
+      text-align: center;
+      color: #3b3b98;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #f1f2f6;
+      box-shadow: 0 2px 8px rgba(59,59,152,0.07);
+    }
+    .tab {
+      flex: 1 1 120px;
+      padding: 12px 0;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.05em;
+      transition: background 0.2s, color 0.2s;
+      border: none;
+      outline: none;
+      background: none;
+      margin: 2px;
+      border-radius: 8px;
+    }
+    .tab.active {
+      color: #fff;
+      background: linear-gradient(90deg, #3b3b98 60%, #f7b731 100%);
+      box-shadow: 0 2px 8px rgba(59,59,152,0.13);
+    }
+    .tab.math { color: #3b3b98; }
+    .tab.science { color: #20bf6b; }
+    .tab.history { color: #fd9644; }
+    .tab.ela { color: #8854d0; }
+    .tab.art { color: #e17055; }
+    .tab.theater { color: #00b894; }
+    .tab.gla { color: #00bcd4; }
+    .tab.ita { color: #636e72; }
+    .tab.vet { color: #6d214f; }
+    .tab.active.math { background: linear-gradient(90deg, #3b3b98 60%, #778beb 100%);}
+    .tab.active.science { background: linear-gradient(90deg, #20bf6b 60%, #f7b731 100%);}
+    .tab.active.history { background: linear-gradient(90deg, #fd9644 60%, #f5cd79 100%);}
+    .tab.active.ela { background: linear-gradient(90deg, #8854d0 60%, #f3a683 100%);}
+    .tab.active.art { background: linear-gradient(90deg, #e17055 60%, #fab1a0 100%);}
+    .tab.active.theater { background: linear-gradient(90deg, #00b894 60%, #55efc4 100%);}
+    .tab.active.gla { background: linear-gradient(90deg, #00bcd4 60%, #81ecec 100%);}
+    .tab.active.ita { background: linear-gradient(90deg, #636e72 60%, #b2bec3 100%);}
+    .tab.active.vet { background: linear-gradient(90deg, #6d214f 60%, #f8a5c2 100%);}
+    #class-list-section {
+      margin-bottom: 16px;
+      padding: 10px 0 0 0;
+      border-bottom: 1.5px solid #eee;
+    }
+    #class-list-section h3 {
+      margin: 0 0 6px 0;
+      font-size: 1.08em;
+      color: #3b3b98;
+      font-weight: 600;
+    }
+    .class-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .class-btn {
+      background: #f1f2f6;
+      border: 1.5px solid #dfe6e9;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.98em;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      color: #3b3b98;
+      font-weight: 500;
+    }
+    .class-btn.active {
+      background: #3b3b98;
+      color: #fff;
+      border-color: #3b3b98;
+    }
+    #back-to-forum {
+      background: #f7b731;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 4px 12px;
+      font-size: 0.95em;
+      cursor: pointer;
+      margin-bottom: 8px;
+      margin-right: 8px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    #back-to-forum:hover {
+      background: #fd9644;
+    }
+    #chat {
+      border: 2px solid #e1e1e1;
+      border-radius: 10px;
+      height: 260px;
+      overflow-y: auto;
+      padding: 14px;
+      background: #f9fafc;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(136,84,208,0.06);
+      transition: border-color 0.2s;
+    }
+    .msg {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #f1f2f6;
+      box-shadow: 0 1px 2px rgba(59,59,152,0.03);
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      word-break: break-word;
+    }
+    .msg .user {
+      font-weight: bold;
+      margin-right: 6px;
+      display: inline;
+    }
+    .msg .text {
+      display: inline;
+    }
+    .msg.math { background: #d6e0ff; }
+    .msg.science { background: #d4f5e9; }
+    .msg.history { background: #ffe5d0; }
+    .msg.ela { background: #e7d6fa; }
+    .msg.art { background: #ffe0e0; }
+    .msg.theater { background: #d0f8ef; }
+    .msg.gla { background: #e0f7fa; }
+    .msg.ita { background: #dfe6e9; }
+    .msg.vet { background: #f8a5c2; }
+    #inputArea {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+    #username, #message {
+      padding: 9px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    #username:focus, #message:focus {
+      border-color: #3b3b98;
+    }
+    #sendBtn {
+      background: linear-gradient(90deg, #3b3b98 60%, #f7b731 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 9px 18px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    #sendBtn:hover {
+      background: linear-gradient(90deg, #3b3b98 60%, #fd9644 100%);
+    }
+    .note {
+      font-size: 0.95em;
+      color: #888;
+      text-align: center;
+      margin-top: 16px;
+    }
+    @media (max-width: 800px) {
+      .container { padding: 12px 2vw 8px 2vw; }
+      #chat { height: 180px; }
+      .tabs { font-size: 0.95em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Student Help Chat Forums (Demo)</h2>
+    <div class="tabs" id="forum-tabs"></div>
+    <div id="class-list-section"></div>
+    <div id="chat"></div>
+    <form id="inputArea" autocomplete="off">
+      <input type="text" id="username" placeholder="Your name" required maxlength="16">
+      <input type="text" id="message" placeholder="Type your message..." required maxlength="120">
+      <button type="submit" id="sendBtn">Send</button>
+    </form>
+    <div class="note">
+      <b>Demo only:</b> Messages are only visible to you and are not shared with others.<br>
+      Try switching forums and classes!
+    </div>
+  </div>
+  <script>
+    // Forums and classes
+    const forums = [
+      { key: 'math', label: 'Math', color: 'math' },
+      { key: 'science', label: 'Science', color: 'science' },
+      { key: 'history', label: 'History', color: 'history' },
+      { key: 'ela', label: 'ELA', color: 'ela' },
+      { key: 'art', label: 'Art', color: 'art' },
+      { key: 'theater', label: 'Theater', color: 'theater' },
+      { key: 'gla', label: 'Global Logistics Academy', color: 'gla' },
+      { key: 'ita', label: 'IT Academy', color: 'ita' },
+      { key: 'vet', label: 'Vet Academy', color: 'vet' }
+    ];
+
+    // Example class lists (customize as needed)
+    const forumClasses = {
+      math: ["Algebra I", "Algebra II", "Geometry", "Pre-Calculus", "Calculus"],
+      science: ["Biology", "Chemistry", "Physics", "Environmental Science"],
+      history: ["World History", "US History", "Civics", "Economics"],
+      ela: ["English I", "English II", "English III", "English IV"],
+      art: ["Drawing", "Painting", "Sculpture", "Digital Art"],
+      theater: ["Acting", "Stagecraft", "Musical Theater"],
+      gla: ["Intro to Logistics", "Supply Chain Management", "Global Trade"],
+      ita: ["Intro to IT", "Networking", "Programming", "Cybersecurity"],
+      vet: ["Animal Science", "Vet Assisting I", "Vet Assisting II"]
+    };
+
+    // State
+    let currentForum = forums[0].key;
+    let currentClass = null; // null means main forum, otherwise class name
+
+    // Store messages for each forum/class
+    const forumMessages = {}; // key: forum or forum:class
+
+    // DOM
+    const forumTabs = document.getElementById('forum-tabs');
+    const classListSection = document.getElementById('class-list-section');
+    const chat = document.getElementById('chat');
+    const inputArea = document.getElementById('inputArea');
+    const usernameInput = document.getElementById('username');
+    const messageInput = document.getElementById('message');
+
+    // Render forum tabs
+    function renderTabs() {
+      forumTabs.innerHTML = '';
+      forums.forEach(forum => {
+        const btn = document.createElement('button');
+        btn.className = `tab ${forum.color}` + (currentForum === forum.key && !currentClass ? ' active' : '');
+        btn.textContent = forum.label;
+        btn.onclick = () => {
+          currentForum = forum.key;
+          currentClass = null;
+          renderTabs();
+          renderClassList();
+          renderMessages();
+        };
+        forumTabs.appendChild(btn);
+      });
+    }
+
+    // Render class list for current forum
+    function renderClassList() {
+      classListSection.innerHTML = '';
+      const classes = forumClasses[currentForum];
+      if (classes && !currentClass) {
+        const h3 = document.createElement('h3');
+        h3.textContent = 'Classes in ' + forums.find(f => f.key === currentForum).label + ':';
+        classListSection.appendChild(h3);
+        const listDiv = document.createElement('div');
+        listDiv.className = 'class-list';
+        classes.forEach(cls => {
+          const btn = document.createElement('button');
+          btn.className = 'class-btn';
+          btn.textContent = cls;
+          btn.onclick = () => {
+            currentClass = cls;
+            renderTabs();
+            renderClassList();
+            renderMessages();
+          };
+          listDiv.appendChild(btn);
+        });
+        classListSection.appendChild(listDiv);
+      } else if (currentClass) {
+        // Show back button and class name
+        const backBtn = document.createElement('button');
+        backBtn.id = 'back-to-forum';
+        backBtn.textContent = '← Back to ' + forums.find(f => f.key === currentForum).label + ' Forum';
+        backBtn.onclick = () => {
+          currentClass = null;
+          renderTabs();
+          renderClassList();
+          renderMessages();
+        };
+        classListSection.appendChild(backBtn);
+        const h3 = document.createElement('h3');
+        h3.textContent = currentClass + ' Chat';
+        classListSection.appendChild(h3);
+      }
+    }
+
+    // Get the room key (forum or forum:class)
+    function getRoomKey() {
+      return currentClass ? `${currentForum}:${currentClass}` : currentForum;
+    }
+
+    // Send message
+    inputArea.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = usernameInput.value.trim();
+      const text = messageInput.value.trim();
+      if (!user || !text) return;
+      const room = getRoomKey();
+      if (!forumMessages[room]) forumMessages[room] = [];
+      forumMessages[room].push({ user, text });
+      renderMessages();
+      messageInput.value = '';
+      messageInput.focus();
+    });
+
+    // Render messages for current forum/class
+    function renderMessages() {
+      const room = getRoomKey();
+      const forumColor = currentForum;
+      chat.innerHTML = '';
+      (forumMessages[room] || []).forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${forumColor}`;
+        msgDiv.innerHTML = `<span class="user">${escapeHTML(msg.user)}:</span> <span class="text">${escapeHTML(msg.text)}</span>`;
+        chat.appendChild(msgDiv);
+      });
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
+
+    // Initial render
+    renderTabs();
+    renderClassList();
+    renderMessages();
+  </script>
+</body>
+</html>
